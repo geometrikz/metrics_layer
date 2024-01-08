@@ -252,7 +252,10 @@ class SeedMetricsLayer:
         elif self.connection.type == Definitions.druid:
             sql_table_name = f"{schema_name}.{table_name}"
         elif self.connection.type == Definitions.bigquery:
-            sql_table_name = f"`{self.database}.{schema_name}.{table_name}`"
+            if self._database_is_not_default:
+                sql_table_name = f"`{self.database}.{schema_name}.{table_name}`"
+            else:
+                sql_table_name = f"`{schema_name}.{table_name}`"
         else:
             raise NotImplementedError(f"Unsupported connection type {self.connection.type}")
         view = {
