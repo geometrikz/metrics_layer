@@ -95,6 +95,21 @@ class Project:
         if refresh_cache:
             self.refresh_cache()
 
+    def update_field(self, field: dict, view_name: str, refresh_cache: bool = True):
+        view = next((v for v in self._views if v["name"] == view_name), None)
+        if view is None:
+            raise AccessDeniedOrDoesNotExistException(
+                f"Could not find a view matching the name {view_name}",
+                object_name=view_name,
+                object_type="view",
+            )
+        for f in view["fields"]:
+            if f["name"].lower() == field["name"].lower():
+                f.update(field)
+                break
+        if refresh_cache:
+            self.refresh_cache()
+
     @property
     def timezone(self):
         if self._timezone:
